@@ -1,0 +1,13 @@
+[package]
+name = "fbs-core"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+description = "Scene graph, director buses, transitions and audio mixer for Free Broadcast Studio"
+
+[dependencies]
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+[dev-dependencies]
+serde_json = "1"

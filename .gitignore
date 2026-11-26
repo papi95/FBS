@@ -1,0 +1,7 @@
+/target
+/dist/windows/*.pdb
+.ghlogin.log
+# Release assets and the local download mirror are built, not source.
+/fbs-windows.zip
+/download/fbs-windows.zip
+/download/fbs-src.zip

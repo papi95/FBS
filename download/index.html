@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FBS — Windows build</title>
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; }
+  body { margin:0; min-height:100vh; display:grid; place-items:center;
+    background:radial-gradient(1200px 600px at 50% -10%, #1c2430, #0b0e13 60%);
+    color:#e8edf5; font:16px/1.6 ui-sans-serif, system-ui, "Segoe UI", Roboto, sans-serif;
+    padding:32px 20px; }
+  main { width:100%; max-width:600px; }
+  h1 { font-size:26px; margin:0 0 4px; letter-spacing:-0.01em; }
+  .sub { color:#94a3b4; margin:0 0 26px; font-size:14px; }
+  a.dl { display:flex; align-items:center; gap:14px;
+    background:linear-gradient(180deg,#2f7cf6,#2563d9); color:#fff; text-decoration:none;
+    border-radius:12px; padding:18px 22px; font-weight:600; font-size:17px;
+    box-shadow:0 12px 28px rgba(37,99,217,.35); }
+  a.dl:hover { filter:brightness(1.08); }
+  a.dl small { display:block; font-weight:400; font-size:13px; opacity:.85; }
+  a.dl .arrow { margin-left:auto; font-size:20px; }
+  .mirror { margin-top:12px; font-size:13.5px; color:#8b98a8; }
+  .mirror a, .alt a { color:#7fb4ff; }
+  ol { margin:24px 0 0; padding-left:22px; color:#c3ccd9; font-size:14.5px; }
+  ol li { margin-bottom:10px; }
+  code { background:#1b222c; border:1px solid #2a3340; border-radius:5px;
+    padding:1px 6px; font-size:13px; color:#9ed0ff; }
+  .note { margin-top:24px; padding:14px 16px; border-radius:10px; background:#141a22;
+    border:1px solid #232c38; color:#93a0b0; font-size:13.5px; }
+  .alt { margin-top:20px; font-size:13.5px; color:#8b98a8; border-top:1px solid #1d2531; padding-top:16px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Free Broadcast Studio</h1>
+  <p class="sub">Windows test build · 7 MB · no installer, nothing to install</p>
+
+  <a class="dl" href="https://files.catbox.moe/8e1csp.zip" download>
+    Download fbs-windows.zip
+    <small>fbs.exe · gpu_report.exe · render_project.exe</small>
+    <span class="arrow">↓</span>
+  </a>
+  <p class="mirror">If that link is blocked, <a href="fbs-windows.zip" download>use this local copy</a>.</p>
+
+  <ol>
+    <li>Right-click the ZIP → <strong>Extract All</strong> → any folder, e.g. <code>C:\FBS</code></li>
+    <li>Run <code>gpu_report.exe</code> first. It should name your Intel HD 5500 and say <em>hardware GPU</em>.</li>
+    <li>Run <code>fbs.exe</code>. Click a scene, press <kbd>Space</kbd> to take it live, drag the T-bar.</li>
+    <li>Run <code>render_project.exe</code> to write proof PNGs into <code>artifacts\frames\</code>.</li>
+  </ol>
+
+  <div class="note">
+    SmartScreen may warn the publisher is unknown — choose <strong>More info</strong> then
+    <strong>Run anyway</strong>. These are local unsigned builds; nothing is installed.
+  </div>
+
+  <p class="alt">
+    Rust source: <a href="fbs-src.zip" download>fbs-src.zip</a> (110 KB) ·
+    <a href="SHA256SUMS.txt">checksums</a>
+  </p>
+</main>
+</body>
+</html>

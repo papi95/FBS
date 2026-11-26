@@ -1,0 +1,16 @@
+[package]
+name = "fbs-app"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+description = "FBS control room: scenes, T-bar, transition and mixer UI"
+
+[dependencies]
+fbs-core = { path = "../fbs-core" }
+eframe = { version = "0.29", default-features = false, features = ["glow", "default_fonts"] }
+egui = "0.29"
+rfd = "0.15"
+
+[[bin]]
+name = "fbs"
+path = "src/main.rs"

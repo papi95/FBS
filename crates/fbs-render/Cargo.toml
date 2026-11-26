@@ -1,0 +1,16 @@
+[package]
+name = "fbs-render"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+description = "wgpu compositor for Free Broadcast Studio: layered scenes and transitions"
+
+[dependencies]
+fbs-core = { path = "../fbs-core" }
+wgpu = "22"
+bytemuck = { version = "1", features = ["derive"] }
+pollster = "0.4"
+log = "0.4"
+
+[dev-dependencies]
+env_logger = "0.11"

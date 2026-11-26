@@ -1,0 +1,18 @@
+[workspace]
+resolver = "2"
+members = ["crates/fbs-core", "crates/fbs-render", "crates/fbs-app"]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+
+[profile.release]
+opt-level = 3
+lto = "thin"
+codegen-units = 1
+strip = true
+
+[profile.dev]
+# The 840 G2 has two cores; keep incremental builds small and fast.
+debug = 1
