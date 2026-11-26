@@ -1,11 +1,14 @@
 /target
 /dist/windows/*.pdb
-.ghlogin.log
-# Release assets and the local download mirror are built, not source.
+# Release assets are built, not source.
 /fbs-windows.zip
 /download/fbs-windows.zip
 /download/fbs-src.zip
+# Local login/session state and workspace internals.
 .ghcode
 .ghrun.log
 .ghpush.log
+.ghlogin.log
 download/github.json
+.freecode/
+.freecode-source-ready
