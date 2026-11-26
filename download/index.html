@@ -21,15 +21,30 @@
   a.dl:hover { filter:brightness(1.08); }
   a.dl small { display:block; font-weight:400; font-size:13px; opacity:.85; }
   a.dl .arrow { margin-left:auto; font-size:20px; }
-  .mirror { margin-top:12px; font-size:13.5px; color:#8b98a8; }
-  .mirror a, .alt a { color:#7fb4ff; }
+  .mirror { margin-top:10px; font-size:13px; color:#7f8c9c; }
+  .mirror a { color:#7fb4ff; }
   ol { margin:24px 0 0; padding-left:22px; color:#c3ccd9; font-size:14.5px; }
   ol li { margin-bottom:10px; }
   code { background:#1b222c; border:1px solid #2a3340; border-radius:5px;
     padding:1px 6px; font-size:13px; color:#9ed0ff; }
-  .note { margin-top:24px; padding:14px 16px; border-radius:10px; background:#141a22;
+  kbd { background:#222a35; border:1px solid #333d4b; border-bottom-width:2px;
+    border-radius:4px; padding:0 5px; font-size:12.5px; }
+  .note { margin-top:22px; padding:13px 15px; border-radius:10px; background:#141a22;
     border:1px solid #232c38; color:#93a0b0; font-size:13.5px; }
-  .alt { margin-top:20px; font-size:13.5px; color:#8b98a8; border-top:1px solid #1d2531; padding-top:16px; }
+  .gh { margin-top:26px; border-top:1px solid #1d2531; padding-top:20px; }
+  .gh h2 { font-size:15px; margin:0 0 6px; font-weight:600; }
+  .gh p { margin:0 0 12px; color:#8b98a8; font-size:13.5px; }
+  button { font:inherit; font-weight:600; font-size:14px; color:#fff; cursor:pointer;
+    background:#232c38; border:1px solid #333d4b; border-radius:9px; padding:10px 16px; }
+  button:hover { background:#2b3543; }
+  button:disabled { opacity:.55; cursor:default; }
+  .code { display:inline-block; margin:10px 0 4px; padding:10px 16px; border-radius:9px;
+    background:#101722; border:1px solid #2f7cf6; color:#cfe3ff; font-size:22px;
+    font-weight:700; letter-spacing:.12em; font-family:ui-monospace, Menlo, Consolas, monospace; }
+  a.ghlink { color:#7fb4ff; font-size:13.5px; }
+  .status { margin-top:10px; font-size:13.5px; color:#9aa7b6; min-height:1.4em; }
+  .ok { color:#5fd08a; }
+  .bad { color:#ff8a8a; }
 </style>
 </head>
 <body>
@@ -42,7 +57,7 @@
     <small>fbs.exe · gpu_report.exe · render_project.exe</small>
     <span class="arrow">↓</span>
   </a>
-  <p class="mirror">If that link is blocked, <a href="fbs-windows.zip" download>use this local copy</a>.</p>
+  <p class="mirror">Link blocked? <a href="fbs-windows.zip" download>Use the copy on this page</a>.</p>
 
   <ol>
     <li>Right-click the ZIP → <strong>Extract All</strong> → any folder, e.g. <code>C:\FBS</code></li>
@@ -56,10 +71,89 @@
     <strong>Run anyway</strong>. These are local unsigned builds; nothing is installed.
   </div>
 
-  <p class="alt">
-    Rust source: <a href="fbs-src.zip" download>fbs-src.zip</a> (110 KB) ·
-    <a href="SHA256SUMS.txt">checksums</a>
-  </p>
+  <section class="gh">
+    <h2>Put the source on GitHub</h2>
+    <p id="ghintro">Creates a public repository from this project and attaches the Windows build as a release.</p>
+    <button id="ghbtn" type="button">Push to GitHub</button>
+    <div class="status" id="ghstatus"></div>
+  </section>
 </main>
+
+<script>
+const btn = document.getElementById('ghbtn');
+const statusEl = document.getElementById('ghstatus');
+const intro = document.getElementById('ghintro');
+
+function render(s) {
+  const state = s.state || 'idle';
+  if (state === 'idle') {
+    statusEl.textContent = '';
+    statusEl.className = 'status';
+  } else if (state === 'expired' || state === 'error') {
+    statusEl.innerHTML = s.msg || 'Something went wrong.';
+    statusEl.className = 'status bad';
+    btn.disabled = false;
+    btn.textContent = 'Try again';
+  } else if (state === 'done') {
+    statusEl.innerHTML = '<span class="ok">Done — repository is live:</span> ' +
+      '<a class="ghlink" href="' + s.url + '" target="_blank" rel="noopener">' + s.url + '</a>';
+    statusEl.className = 'status';
+    btn.disabled = true;
+    btn.textContent = 'Pushed';
+  } else {
+    if (s.code && state === 'waiting_code') {
+      statusEl.innerHTML =
+        'Enter this code at ' +
+        '<a class="ghlink" href="' + (s.url || 'https://github.com/login/device') +
+        '" target="_blank" rel="noopener">github.com/login/device</a>' +
+        '<br><span class="code">' + s.code + '</span>' +
+        '<br><span style="color:#7f8c9c;font-size:12.5px">The code lasts about 15 minutes. ' +
+        'Leave this page open — it finishes the push by itself.</span>';
+    } else {
+      statusEl.textContent = s.msg || 'Working…';
+    }
+    statusEl.className = 'status';
+    btn.disabled = true;
+    btn.textContent = 'Working…';
+  }
+}
+
+let autoStarted = false;
+
+async function poll() {
+  let s;
+  try {
+    const r = await fetch('github.json', { cache: 'no-store' });
+    s = await r.json();
+  } catch (e) {
+    return; /* page reopened after sleep; try again next tick */
+  }
+  render(s);
+
+  // Start by itself the first time the page is opened, so the device code is
+  // always fresh. Codes only live ~15 minutes; making the user hunt for a
+  // button first is what wasted the earlier attempts.
+  const idle = (s.state === 'idle' || s.state === 'expired' || !s.state);
+  if (idle && !autoStarted) {
+    autoStarted = true;
+    startPush();
+  }
+}
+
+async function startPush() {
+  try {
+    await fetch('push', { method: 'POST' });
+  } catch (e) {}
+  poll();
+}
+
+btn.addEventListener('click', () => {
+  autoStarted = true;
+  startPush();
+});
+
+poll();
+setInterval(poll, 4000);
+</script>
 </body>
 </html>
