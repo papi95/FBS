@@ -52,12 +52,15 @@
   <h1>Free Broadcast Studio</h1>
   <p class="sub">Windows test build · 7 MB · no installer, nothing to install</p>
 
-  <a class="dl" href="https://files.catbox.moe/8e1csp.zip" download>
+  <a class="dl" href="https://github.com/papi95/FBS/releases/download/v0.1.0/fbs-windows.zip">
     Download fbs-windows.zip
     <small>fbs.exe · gpu_report.exe · render_project.exe</small>
     <span class="arrow">↓</span>
   </a>
-  <p class="mirror">Link blocked? <a href="fbs-windows.zip" download>Use the copy on this page</a>.</p>
+  <p class="mirror">
+    <a href="https://github.com/papi95/FBS" target="_blank" rel="noopener">Source on GitHub</a> ·
+    <a href="fbs-windows.zip" download>mirror on this page</a>
+  </p>
 
   <ol>
     <li>Right-click the ZIP → <strong>Extract All</strong> → any folder, e.g. <code>C:\FBS</code></li>
@@ -72,88 +75,15 @@
   </div>
 
   <section class="gh">
-    <h2>Put the source on GitHub</h2>
-    <p id="ghintro">Creates a public repository from this project and attaches the Windows build as a release.</p>
-    <button id="ghbtn" type="button">Push to GitHub</button>
-    <div class="status" id="ghstatus"></div>
+    <h2>Repository</h2>
+    <p>Source, issues and every future build live on GitHub.</p>
+    <p><a class="ghlink" href="https://github.com/papi95/FBS" target="_blank" rel="noopener">
+      github.com/papi95/FBS</a> &nbsp;·&nbsp;
+      <a class="ghlink" href="https://github.com/papi95/FBS/releases" target="_blank" rel="noopener">
+      releases</a>
+    </p>
   </section>
 </main>
 
-<script>
-const btn = document.getElementById('ghbtn');
-const statusEl = document.getElementById('ghstatus');
-const intro = document.getElementById('ghintro');
-
-function render(s) {
-  const state = s.state || 'idle';
-  if (state === 'idle') {
-    statusEl.textContent = '';
-    statusEl.className = 'status';
-  } else if (state === 'expired' || state === 'error') {
-    statusEl.innerHTML = s.msg || 'Something went wrong.';
-    statusEl.className = 'status bad';
-    btn.disabled = false;
-    btn.textContent = 'Try again';
-  } else if (state === 'done') {
-    statusEl.innerHTML = '<span class="ok">Done — repository is live:</span> ' +
-      '<a class="ghlink" href="' + s.url + '" target="_blank" rel="noopener">' + s.url + '</a>';
-    statusEl.className = 'status';
-    btn.disabled = true;
-    btn.textContent = 'Pushed';
-  } else {
-    if (s.code && state === 'waiting_code') {
-      statusEl.innerHTML =
-        'Enter this code at ' +
-        '<a class="ghlink" href="' + (s.url || 'https://github.com/login/device') +
-        '" target="_blank" rel="noopener">github.com/login/device</a>' +
-        '<br><span class="code">' + s.code + '</span>' +
-        '<br><span style="color:#7f8c9c;font-size:12.5px">The code lasts about 15 minutes. ' +
-        'Leave this page open — it finishes the push by itself.</span>';
-    } else {
-      statusEl.textContent = s.msg || 'Working…';
-    }
-    statusEl.className = 'status';
-    btn.disabled = true;
-    btn.textContent = 'Working…';
-  }
-}
-
-let autoStarted = false;
-
-async function poll() {
-  let s;
-  try {
-    const r = await fetch('github.json', { cache: 'no-store' });
-    s = await r.json();
-  } catch (e) {
-    return; /* page reopened after sleep; try again next tick */
-  }
-  render(s);
-
-  // Start by itself the first time the page is opened, so the device code is
-  // always fresh. Codes only live ~15 minutes; making the user hunt for a
-  // button first is what wasted the earlier attempts.
-  const idle = (s.state === 'idle' || s.state === 'expired' || !s.state);
-  if (idle && !autoStarted) {
-    autoStarted = true;
-    startPush();
-  }
-}
-
-async function startPush() {
-  try {
-    await fetch('push', { method: 'POST' });
-  } catch (e) {}
-  poll();
-}
-
-btn.addEventListener('click', () => {
-  autoStarted = true;
-  startPush();
-});
-
-poll();
-setInterval(poll, 4000);
-</script>
 </body>
 </html>
