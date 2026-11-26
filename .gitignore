@@ -5,3 +5,7 @@
 /fbs-windows.zip
 /download/fbs-windows.zip
 /download/fbs-src.zip
+.ghcode
+.ghrun.log
+.ghpush.log
+download/github.json
