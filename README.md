@@ -57,3 +57,10 @@ Build for Windows from Linux with `cargo build --release -p fbs-app
 * Windows X-Lite is a modified image. DXGI capture and Quick Sync depend on intact Intel
   graphics drivers; if capture or encoding misbehaves, test on stock Windows before
   blaming FBS.
+
+## Download
+
+Windows test build: **https://github.com/papi95/FBS/releases/latest**
+
+Extract the ZIP, run `gpu_report.exe` first (it should name your Intel GPU),
+then `fbs.exe`.
